@@ -1,0 +1,43 @@
+# Build gates: structural gate + ruff on every commit. Run `pre-commit install`
+# once per clone (bin/setup does it when this is a git repo). `bin/py` picks the
+# venv, so a contributor using uv or conda needs no edit here. CI
+# (.github/workflows/guards.yml) is the unskippable backstop.
+repos:
+  - repo: local
+    hooks:
+      - id: pf-guards
+        name: pf-core structural gate
+        entry: bin/py -m pf_core.guards
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: ruff
+        name: ruff
+        entry: bin/py -m ruff check src tests
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: ruff-format
+        name: ruff format
+        entry: bin/py -m ruff format --check src tests
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: mypy
+        name: mypy
+        entry: bin/py -m mypy
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: pptxkit-layers
+        name: pptxkit import-layering
+        entry: bin/py bin/check-layers
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: pptxkit-framework
+        name: pptxkit framework-first (pf-core)
+        entry: bin/py bin/check-framework
+        language: system
+        pass_filenames: false
+        always_run: true
